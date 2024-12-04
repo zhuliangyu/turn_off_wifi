@@ -6,6 +6,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Duration;
 import java.util.ArrayList;
 
@@ -17,13 +20,25 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!2" );
-
         ArrayList<String> names = new ArrayList<>();
-        names.add("alex ipad");
-        names.add("Dining-room-TV");
-        names.add("Alina-new-DESKTOP-Q1JVARU");
-        names.add("Alex-iPad");
+
+        String fileName = "/ssid.txt";
+        // Try-with-resources to automatically close the resources
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(App.class.getResourceAsStream(fileName)))) {
+
+            String line;
+            // Read the file line by line
+            while ((line = reader.readLine()) != null) {
+                //System.out.println(line);
+                names.add(line);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println( "Hello World!2" );
 
         // Setup ChromeDriver using WebDriverManager
         WebDriverManager.chromedriver().setup();
@@ -60,7 +75,7 @@ public class App
         // Create an explicit wait for up to 4 seconds
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 
-        String xpath_expression = String.format("//td[contains(text(), '%s')]", machine_name);
+        String xpath_expression = String.format("//td[text()='%s']", machine_name);
 
         try {
             WebElement element_machine = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath_expression)));
