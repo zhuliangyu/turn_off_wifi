@@ -23,6 +23,7 @@ public class App
         ArrayList<String> names = new ArrayList<>();
 
         String fileName = "/ssid.txt";
+        String admin_portal = "http://192.168.124.1/mobile_access_net.asp";
         // Try-with-resources to automatically close the resources
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(App.class.getResourceAsStream(fileName)))) {
@@ -46,12 +47,12 @@ public class App
 
         WebDriver driver = new ChromeDriver();
 
-        driver.get("https://openwrt.enbut.com/mobile_access_net.asp");
+        driver.get(admin_portal);
         driver.switchTo().frame("net_access_list");
 
         names.forEach((machine_name) -> {
             try {
-                turn_off_machine(driver, machine_name );
+                turn_off_machine(driver, machine_name, admin_portal );
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -68,8 +69,8 @@ public class App
         driver.quit();
     }
 
-    public static void turn_off_machine(WebDriver driver, String machine_name) throws InterruptedException {
-        driver.get("https://openwrt.enbut.com/mobile_access_net.asp");
+    public static void turn_off_machine(WebDriver driver, String machine_name, String admin_portal) throws InterruptedException {
+        driver.get(admin_portal);
         driver.switchTo().frame("net_access_list");
 
         // Create an explicit wait for up to 4 seconds
